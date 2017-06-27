@@ -1,0 +1,10 @@
+{
+  "sourceMaps": true,
+  "presets": [
+    ["es2015", {"modules": false}],
+    "stage-3"
+  ],
+  "plugins": [
+    ["transform-es2015-modules-commonjs"]
+  ]
+}
