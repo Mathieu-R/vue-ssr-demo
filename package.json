@@ -26,7 +26,9 @@
   "homepage": "https://github.com/Mathieu-R/vue-ssr-demo#readme",
   "dependencies": {
     "concurrently": "^3.4.0",
-    "vue": "^2.3.4"
+    "vue": "^2.3.4",
+    "vue-server-renderer": "^2.3.4",
+    "webpack-merge": "^4.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

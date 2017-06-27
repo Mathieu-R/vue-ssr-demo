@@ -9,7 +9,7 @@ module.exports = {
     },
     entry: {
         front: [path.resolve(__dirname, 'front/index.js')], // entrypoint for front js file
-        back: false // entrypoint for server js file
+        back: [path.resolve(__dirname, 'back/entry-server.js')] // entrypoint for server js file
     },
     vendor: ['vue'], // vue, vue-router, vuex,...
     devtool: production ? 'source-map' : 'eval-source-map',

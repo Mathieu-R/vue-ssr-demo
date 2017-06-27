@@ -14,9 +14,6 @@ const extractSass = new ExtractTextPlugin({
 
 const plugins = [
   extractSass,
-  new webpack.optimize.CommonsChunkPlugin({
-    name: 'common'
-  }),
   new webpack.optimize.ModuleConcatenationPlugin()
 ];
 
@@ -92,11 +89,6 @@ if (config.entry.back) {
 
 
 const common = {
-  devtool: config.devtool,
-  entry: {
-    app: config.entry.front,
-    vendor: config.vendor
-  },
   output: {
     path: path.resolve('dist'),
     filename: '[name].bundle.[hash].js',
