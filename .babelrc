@@ -2,7 +2,11 @@
   "sourceMaps": true,
   "presets": [
     ["es2015", {"modules": false}],
-    "stage-3"
+    "stage-3",
+    ["env: {
+      "targets": {
+        "browsers": ["last 2 versions"]
+    }]
   ],
   "plugins": [
     ["transform-es2015-modules-commonjs"]
