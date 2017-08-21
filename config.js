@@ -5,14 +5,14 @@ module.exports = {
     title: 'vue-ssr-demo', // <title> of index.html
     port: {
         front: 4000, // port for devServer
-        back: 8080 // port for backend api (proxytable)
+        back: 2000 // port for backend api (proxytable)
     },
     entry: {
-        front: [path.resolve(__dirname, 'front/index.js')], // entrypoint for front js file
-        back: [path.resolve(__dirname, 'back/entry-server.js')] // entrypoint for server js file
+        front: [path.resolve(__dirname, 'src/entry-client.js')], // entrypoint for front js file
+        back: [path.resolve(__dirname, 'src/entry-server.js')] // entrypoint for server js file
     },
     vendor: ['vue'], // vue, vue-router, vuex,...
-    devtool: production ? 'source-map' : 'eval-source-map',
-    componentsPath: path.resolve(__dirname, 'front/components'), // path for components (aliases)
-    staticPath: path.resolve(__dirname, 'front'), // path for static files (aliases)
+    devtool: production ? false : 'eval-source-map',
+    componentsPath: path.resolve(__dirname, 'src/components'), // path for components (aliases)
+    staticPath: path.resolve(__dirname, 'src'), // path for static files (aliases)
 }

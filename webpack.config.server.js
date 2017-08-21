@@ -7,13 +7,14 @@ const VueSSRServerPlugin = require('vue-server-renderer/server-plugin');
 const server = merge(baseConfig, {
   entry: config.entry.back,
   output: {
-    library: 'commonjs2'
+    filename: 'server-bundle.js',
+    libraryTarget: 'commonjs2'
   },
   target: 'node',
   devtool: 'source-map',
   externals: nodeExternals({
     // do not externalise dependencies that need to be processed by webpack
-    whitelist: /\.(css|vue)$/
+    whitelist: /\.(css)$/
   }),
   plugins: [
     new VueSSRServerPlugin()

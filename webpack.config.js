@@ -72,27 +72,19 @@ if (production) {
     new webpack.HotModuleReplacementPlugin(), // hot reload
     new webpack.NoEmitOnErrorsPlugin(), // do not build bundle if they have errors
     new webpack.NamedModulesPlugin(), // print more readable module names in console on HMR,
-    new htmlWebpackPlugin({ // generate index.html
-      title: config.title,
-      filename: 'index.html',
-      template: './front/index.html'
-    })
+    // new htmlWebpackPlugin({ // generate index.html
+    //   title: config.title,
+    //   template: './src/index.html'
+    // })
     //new BundleAnalyzerPlugin(), // analyse the bundles and their contents
   );
 };
-
-if (config.entry.back) {
-  Object.assign(devServer, {proxy: {
-    "*": `http://localhost:${config.port.back}`
-  }});
-}
-
 
 const common = {
   output: {
     path: path.resolve('dist'),
     filename: '[name].bundle.[hash].js',
-    publicPath: '/'
+    publicPath: '/dist/'
   },
   resolve: {
     extensions: ['.html', '.hbs', '.js', '.jsx', '.css', '.scss', '.vue', '.json', '.jpg', '.png', '.svg'],
@@ -115,23 +107,9 @@ const common = {
       options: {
         loader: {
           style: 'css-loader!sass-loader', // loader for <style> tag in .vue file
-          extractCSS: production ? true : false, // extract css in production only (otherwise prevent hot-reload in dev-mode)
+          extractCSS: production, // extract css in production only (otherwise prevent hot-reload in dev-mode)
           optimizeSSR: true // optimise server-side-rendering
         }
-      }
-    },{
-      test: /\.(ico|png|jpg|jpeg|gif|svg|woff2?|eot|ttf)$/,
-      loader: "file-loader",
-      query: {
-        limit: 10000,
-        name: '[name]-[hash:7].[ext]'
-      }
-    },{
-      test: /\.(mp4|webm|wav|mp3|m4a|aac|oga)(\?.*)?$/,
-      loader: 'url-loader',
-      query: {
-        name: '[name]-[hash:7].[ext]',
-        limit: 10000,
       }
     }]
   },
@@ -141,7 +119,7 @@ const common = {
     }
   },
   performance: {
-    hints: 'warning'
+    hints: production ? 'warning' : false
   },
   plugins,
   devServer
