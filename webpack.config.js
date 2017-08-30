@@ -6,123 +6,79 @@ const nodeExternals = require('webpack-node-externals');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const MinifyPlugin = require("babel-minify-webpack-plugin");
+const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const extractSass = new ExtractTextPlugin({
     filename: '[name].[contenthash].css',
     disable: !production
 });
 
-const plugins = [
-  extractSass,
-  new webpack.optimize.ModuleConcatenationPlugin()
-];
-
-const devServer = {
-  contentBase: config.contentBase,
-  hot: true,
-  hotOnly: true,
-  historyApiFallback: true,
-  port: config.port.front,
-  compress: production,
-  inline: !production,
-  hot: !production,
-  stats: {
-    assets: true,
-    children: false,
-    chunks: true,
-    hash: true,
-    modules: false,
-    publicPath: false,
-    timings: true,
-    version: false,
-    warnings: true,
-    colors: {
-      green: '\u001b[32m'
-    }
-  }
-}
+let plugins;
 
 if (production) {
-  plugins.push(
+  plugins = [
+    extractSass,
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('production')
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      comments: false,
-      compress: {
-        unused: true,
-        warnings: false,
-        conditionals: true,
-        comparisons: true,
-        sequences: true,
-        dead_code: true,
-        if_return: true,
-        join_vars: true
-      },
-      output: {
-        comments: false
-      }
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new MinifyPlugin({}, {
+      comments: false
     })
-  );
+  ];
 } else {
-  plugins.push(
-    new webpack.HotModuleReplacementPlugin(), // hot reload
-    new webpack.NoEmitOnErrorsPlugin(), // do not build bundle if they have errors
+  plugins = [
     new webpack.NamedModulesPlugin(), // print more readable module names in console on HMR,
-    // new htmlWebpackPlugin({ // generate index.html
-    //   title: config.title,
-    //   template: './src/index.html'
-    // })
     //new BundleAnalyzerPlugin(), // analyse the bundles and their contents
-  );
+  ];
 };
 
 const common = {
   output: {
     path: path.resolve('dist'),
-    filename: '[name].bundle.[hash].js',
+    filename: production ? '[name].bundle.[hash].js' : '[name].bundle.js',
     publicPath: '/dist/'
   },
   resolve: {
-    extensions: ['.html', '.hbs', '.js', '.jsx', '.css', '.scss', '.vue', '.json', '.jpg', '.png', '.svg'],
+    extensions: ['.js', '.vue'],
     alias: {
       components: config.componentsPath,
       src: config.staticPath
     }
   },
   module: {
-    rules: [{
-      test: /\.hbs$/,
-      loader: 'handlebars-loader'
-    },{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      loader: 'babel-loader'
-    },{
-      test: /\.vue$/,
-      loader: 'vue-loader',
-      options: {
-        loader: {
+    rules: [
+      {
+        test: /\.hbs$/,
+        loader: 'handlebars-loader'
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        options: {
           style: 'css-loader!sass-loader', // loader for <style> tag in .vue file
           extractCSS: production, // extract css in production only (otherwise prevent hot-reload in dev-mode)
+          postcss: [
+            autoprefixer({browsers: ['last 3 versions']})
+          ],
           optimizeSSR: true // optimise server-side-rendering
         }
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader'
       }
-    }]
-  },
-  stats: {
-    colors: {
-      green: '\u001b[32m'
-    }
+    ]
   },
   performance: {
     hints: production ? 'warning' : false
   },
-  plugins,
-  devServer
+  plugins
 };
 
 module.exports = common;
