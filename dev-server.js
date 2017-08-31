@@ -13,7 +13,7 @@ module.exports = function devServer(app, cb) {
     cb(options);
   }
 
-  //clientConfig.entry.app = ['webpack-hot-middleware/client', clientConfig.entry.app];
+  clientConfig.entry.app.push('webpack-hot-middleware/client');
   clientConfig.output.filename = '[name].js';
   clientConfig.plugins.push(
     new webpack.HotModuleReplacementPlugin(), // hot reload

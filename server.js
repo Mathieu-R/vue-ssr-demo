@@ -26,22 +26,24 @@ function doSSR(req, res) {
   });
 }
 
+function bundleRenderer(bundle, options) {
+  return createBundleRenderer(bundle, Object.assign({}, options, {
+    runInNewContext: false, // recommended
+    template // optional
+  }))
+}
+
 let renderer;
 let ready;
 if (production) {
-  renderer = createBundleRenderer(serverBundleJSON, {
-    runInNewContext: false, // recommended
-    template, // optional
-    clientManifest: clientManifestJSON // optional
+  renderer = bundleRenderer(serverBundleJSON, {
+    clientManifest: clientManifestJSON
   });
 } else {
   // dev server
   ready = devServer(app, (bundle, options) => {
-    renderer = createBundleRenderer(bundle, Object.assign(options, {
-      runInNewContext: false,
-      template
-    }),
-  )});
+    renderer = bundleRenderer(bundle, options);
+  });
 }
 
 app.get('*', production ? doSSR : (req, res) => {
